@@ -304,7 +304,7 @@ function delCustom(){DEL.push(cw.id);CUS=CUS.filter(c=>c.id!==cw.id);W.splice(W.
 const MODEL='claude-sonnet-5-5';
 const CFG=()=>{try{return JSON.parse(localStorage.getItem('hf-cfg')||'{}')}catch(e){return{}}};
 (()=>{const c=CFG();$('s-key').value=c.key||'';$('s-url').value=c.url||'';$('s-anon').value=c.anon||'';$('s-code').value=c.code||''})();
-function saveCfg(){const c={key:$('s-key').value.trim(),url:$('s-url').value.trim().replace(/\/$/,''),anon:$('s-anon').value.trim(),code:$('s-code').value.trim()};
+function saveCfg(){const c={key:$('s-key').value.trim(),url:(($('s-url').value.trim().match(/^https?:\/\/[^\/\s]+/)||[$('s-url').value.trim()])[0]),anon:$('s-anon').value.trim(),code:$('s-code').value.trim()};
  if(c.url&&c.code.length<16){$('s-msg').textContent='Gebruik een sync-code van minstens 16 tekens (knop "Maak sync-code").';return}
  try{localStorage.setItem('hf-cfg',JSON.stringify(c))}catch(e){}$('s-msg').textContent='Opgeslagen.';syncNow()}
 async function askJSON(p){
@@ -329,10 +329,10 @@ function importText(t){const j=JSON.parse(t);
 function importJSON(){const m=$('yt-msg');try{const id=importText($('imp').value);$('imp').value='';m.textContent='Geïmporteerd.';if(id)openPre(id)}catch(e){m.textContent='Importeren mislukt: '+e.message}}
 function exportBk(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({custom:CUS,log:LOG,del:DEL})],{type:'application/json'}));a.download='homefit-backup.json';a.click()}
 function loadBk(el){const f=el.files[0];if(!f)return;f.text().then(t=>{try{importText(t);$('s-msg').textContent='Back-up geladen.'}catch(e){$('s-msg').textContent='Mislukt: '+e.message}})}
-async function rpc(fn,body){const c=CFG(),r=await fetch(c.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'content-type':'application/json',apikey:c.anon,...(c.anon.startsWith('eyJ')?{Authorization:'Bearer '+c.anon}:{})},body:JSON.stringify(body)});if(!r.ok)throw new Error('sync '+r.status);return r.json()}
+async function rpc(fn,body){const c=CFG(),r=await fetch(c.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'content-type':'application/json',apikey:c.anon,...(c.anon.startsWith('eyJ')?{Authorization:'Bearer '+c.anon}:{})},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status+' '+(await r.text()).slice(0,140));return r.json()}
 async function syncNow(){const c=CFG();if(!(c.url&&c.anon&&c.code)){$('cloud').textContent='Opslag: dit apparaat';return}
  try{const d=await rpc('hf_get',{p_code:c.code});if(d)mergeIn(d);await rpc('hf_set',{p_code:c.code,p_data:{custom:CUS,log:LOG,del:DEL}});$('cloud').textContent='Gesynchroniseerd via Supabase'}
- catch(e){$('cloud').textContent='Sync mislukt (offline?) · opslag: dit apparaat'}}
+ catch(e){$('cloud').textContent='Sync mislukt: '+(e.message||e)+' · opslag: dit apparaat'}}
 addEventListener('online',syncNow);
 async function makeFromVideo(){
  const url=$('yt-url').value.trim(),txt=$('yt-txt').value.trim(),m=$('yt-msg');
