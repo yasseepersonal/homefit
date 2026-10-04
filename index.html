@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HomeFit Vibe</title>
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><meta name="theme-color" content="#0b1120"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="HomeFit">
+<style>
+:root{--bg:#0b1120;--card:#141c2f;--line:#243049;--tx:#f1f5f9;--mut:#8b9ab5;--ac:#4ade80;--ac2:#fbbf24;--far:#4b5d7f;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f4f7fb;--card:#fff;--line:#dbe3ef;--tx:#0f172a;--mut:#5b6b85;--ac:#16a34a;--ac2:#b45309;--far:#a9b8d0;color-scheme:light}}
+:root[data-theme="dark"]{--bg:#0b1120;--card:#141c2f;--line:#243049;--tx:#f1f5f9;--mut:#8b9ab5;--ac:#4ade80;--ac2:#fbbf24;--far:#4b5d7f}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+header{text-align:center;padding:16px 12px 6px}
+h1{margin:0;font-size:21px;letter-spacing:-.3px}h1 b{color:var(--ac)}
+main{max-width:440px;margin:0 auto;padding:10px 16px 28px}
+section[hidden]{display:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px}
+.mut{color:var(--mut);font-size:12.5px}
+.tag{display:inline-block;font-size:11px;font-weight:700;color:var(--ac);background:color-mix(in srgb,var(--ac) 14%,transparent);padding:2px 9px;border-radius:99px}
+.wk{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;cursor:pointer}
+.wk h3{margin:5px 0 2px;font-size:15px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--tx);border-radius:14px;padding:12px;font-weight:600;font-size:13px}
+button.pri{background:var(--ac);color:#06210f;border:0;font-size:16px;padding:15px;width:100%;font-weight:800}
+button.lnk{border:0;background:none;color:var(--ac);padding:4px 0}
+.seg{display:flex;gap:6px;margin:12px 0}.seg button{flex:1;padding:9px}.seg .on{background:var(--ac);color:#06210f;border-color:var(--ac)}
+.ex{display:flex;gap:10px;align-items:center;margin-top:8px;padding:8px 10px}
+.ex svg{width:74px;height:60px;flex:none;background:color-mix(in srgb,var(--bg) 70%,transparent);border-radius:10px}
+.ex h4{margin:0;font-size:13.5px}.ex p{margin:2px 0 0}
+#fig{width:100%;height:auto;background:color-mix(in srgb,var(--bg) 70%,transparent);border-radius:14px}
+.ctl{display:grid;grid-template-columns:1fr 1.2fr 1fr 1fr;gap:8px;margin-top:12px}
+.bar{height:7px;background:var(--line);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:width .3s}
+.ring{position:relative;width:132px;height:132px;margin:10px auto 4px}
+.ring svg{transform:rotate(-90deg)}.ring .t{position:absolute;inset:0;display:grid;place-items:center;font:700 38px ui-monospace,Menlo,monospace}
+#modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:16px;z-index:9}
+#modal.on{display:flex}#modal .card{max-width:380px;width:100%}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center}.two svg{width:100%;height:auto;background:color-mix(in srgb,var(--bg) 70%,transparent);border-radius:10px}
+.in{width:100%;margin-top:8px;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit;font-size:13px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}.tile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 6px;text-align:center}.tile b{display:block;font-size:26px;color:var(--ac)}.tile span{font-size:11px;color:var(--mut)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;margin-top:8px}.cal div{aspect-ratio:1;display:grid;place-items:center;border-radius:10px;font-size:12px;cursor:pointer}.cal div.mut{cursor:default;aspect-ratio:auto}.cal .dn{background:var(--ac);color:#06210f;font-weight:800}.cal .td{outline:2px solid var(--ac2)}
+summary{cursor:pointer;font-weight:700;font-size:13px}details .in{margin-bottom:4px}
+</style>
+</head>
+<body>
+<header><h1>HomeFit <b>Vibe</b></h1><div class="mut">Thuis trainen · mat + 3 kg dumbbells</div><div class="mut" id="cloud" style="font-size:11px">Opslag: dit apparaat</div></header>
+<main>
+<section id="v-sel"><div id="dash"></div><div class="mut" style="margin:16px 0 0;font-size:12px;letter-spacing:.1em;text-transform:uppercase">Kies je workout</div><div id="list"></div>
+ <div id="yt" class="card" style="margin-top:14px">
+  <h3 style="margin:0 0 8px;font-size:15px">Workout toevoegen</h3>
+  <details open><summary>Plak een workout uit een Claude-chat</summary>
+   <div class="mut" style="margin-top:6px">Laat Claude in een chat een workout maken (prompt staat in de README) en plak hier de JSON of een back-up.</div>
+   <textarea class="in" id="imp" rows="4" placeholder='{"title":"...","defs":{...},"seq":[...]}'></textarea>
+   <button class="pri" style="font-size:14px;padding:12px;margin-top:6px" onclick="importJSON()">Importeren</button>
+  </details>
+  <details style="margin-top:12px"><summary>Maak met AI uit een YouTube-video (eigen API-key)</summary>
+   <div class="mut" style="margin-top:6px">Plak link + beschrijving of transcriptie (YouTube: ⋯ → Transcriptie tonen). Vereist een Anthropic API-key bij Instellingen en internet.</div>
+   <input class="in" id="yt-url" placeholder="https://www.youtube.com/watch?v=...">
+   <textarea class="in" id="yt-txt" rows="5" placeholder="Plak hier de beschrijving of transcriptie…"></textarea>
+   <button class="pri" id="yt-go" style="font-size:14px;padding:12px;margin-top:6px" onclick="makeFromVideo()">Maak workout</button>
+  </details>
+  <div id="yt-msg" class="mut" style="margin-top:8px"></div>
+ </div>
+ <details class="card" style="margin-top:10px"><summary>Instellingen, back-up &amp; sync</summary>
+  <div class="mut" style="margin:8px 0 2px">Anthropic API-key (blijft alleen op dit apparaat)</div><input class="in" id="s-key" type="password" autocomplete="off">
+  <div class="mut" style="margin:8px 0 2px">Supabase (optioneel, voor sync tussen apparaten)</div>
+  <input class="in" id="s-url" placeholder="https://xxxx.supabase.co"><input class="in" id="s-anon" placeholder="anon public key"><input class="in" id="s-code" placeholder="sync-code (lang en geheim)">
+  <div style="display:flex;gap:8px;margin-top:6px"><button style="flex:1" onclick="$('s-code').value=crypto.randomUUID()+crypto.randomUUID()">Maak sync-code</button><button class="pri" style="flex:1;font-size:14px;padding:10px" onclick="saveCfg()">Opslaan</button></div>
+  <div id="s-msg" class="mut" style="margin-top:6px"></div>
+  <div class="mut" style="margin:12px 0 4px">Back-up</div>
+  <div style="display:flex;gap:8px"><button style="flex:1" onclick="exportBk()">Download</button><button style="flex:1" onclick="$('bk').click()">Laad bestand</button></div>
+  <input id="bk" type="file" accept=".json" hidden onchange="loadBk(this)">
+ </details>
+</section>
+
+<section id="v-pre" hidden>
+ <button class="lnk" onclick="show('v-sel')">← Alle workouts</button>
+ <div class="card" style="margin-top:6px"><span class="tag" id="p-tag"></span><h2 id="p-title" style="margin:6px 0 2px;font-size:20px"></h2><div class="mut" id="p-desc"></div></div>
+ <div class="mut" id="p-rl" style="margin-top:12px">Aantal rondes</div>
+ <div class="seg" id="seg"></div>
+ <div id="p-sum" class="mut"></div>
+ <div id="p-ex"></div>
+ <button class="pri" style="margin-top:14px" onclick="startWorkout()">Start workout</button>
+ <button class="lnk" id="p-del" hidden style="margin-top:10px;color:#f87171" onclick="delCustom()">Verwijder deze workout</button>
+</section>
+
+<section id="v-run" hidden>
+ <div style="display:flex;justify-content:space-between" class="mut"><span id="r-info"></span><span id="r-left"></span></div>
+ <div class="bar" style="margin:6px 0 10px"><i id="r-bar"></i></div>
+ <div class="card" style="text-align:center">
+  <div id="r-label" style="font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase"></div>
+  <svg id="fig" viewBox="0 0 200 160"></svg>
+  <div id="r-name" style="font-size:19px;font-weight:800;margin-top:8px"></div>
+  <div id="r-tip" class="mut" style="margin-top:2px;min-height:36px"></div>
+  <div class="ring"><svg width="132" height="132" viewBox="0 0 132 132"><circle cx="66" cy="66" r="58" fill="none" stroke="var(--line)" stroke-width="9"/><circle id="r-ring" cx="66" cy="66" r="58" fill="none" stroke="var(--ac)" stroke-width="9" stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="0"/></svg><div class="t" id="r-time">00</div></div>
+  <div id="r-side" style="font-weight:800;color:var(--ac2);min-height:20px"></div>
+  <div id="r-next" class="mut"></div>
+  <div style="margin-top:6px"><button class="lnk" onclick="openM()">Uitleg &amp; houding</button> &nbsp; <button class="lnk" id="vt" onclick="toggleVoice()">Stem: aan</button></div>
+ </div>
+ <div class="ctl">
+  <button onclick="go(-1)">⏮</button><button id="pz" onclick="pause()">Pauze</button><button onclick="go(1)">⏭</button><button id="stp" onclick="stopW()" style="color:#f87171">Stop</button>
+ </div>
+</section>
+
+<section id="v-done" hidden style="text-align:center;padding-top:40px">
+ <div style="font-size:60px">🏆</div><h2 style="margin:6px 0">Lekker getraind!</h2><div class="mut" id="d-sum" style="margin-bottom:22px"></div>
+ <button class="pri" onclick="show('v-sel')">Terug naar overzicht</button>
+</section>
+</main>
+
+<div id="modal"><div class="card">
+ <h3 id="m-title" style="margin:0 0 8px"></h3>
+ <div class="two"><div><svg id="m-a" viewBox="0 0 200 160"></svg><div class="mut">Start</div></div><div><svg id="m-b" viewBox="0 0 200 160"></svg><div class="mut">Eind</div></div></div>
+ <div id="m-body" style="margin:10px 0;font-size:13.5px"></div>
+ <button class="pri" style="font-size:14px;padding:12px" onclick="closeM()">Begrepen, verder</button>
+</div></div>
+
+<script>
+const WORK=40,REST=20,BREAK=30,PREP=10;
+/* Poses: hoeken in graden, 0 = omlaag, 90 = vooruit, 180 = omhoog, -90 = achteruit.
+   [romp, bovenarm, onderarm, bovenbeen, onderbeen, (verre arm/been: boven, onder, boven, onder), tenenlift] */
+const X={
+plank:{n:'Onderarmplank',fl:1,a:[77,0,90,-77,-77],b:[75,0,90,-75,-75],s:'Onderarmen op de mat, ellebogen onder je schouders, op je tenen.',f:'Rechte lijn van hoofd tot hielen. Span billen en buik aan, zak niet door in je onderrug.'},
+taps:{n:'Plank Shoulder Taps',fl:1,uni:1,a:[77,0,0,-77,-77],b:[77,0,0,-77,-77,60,150],s:'Hoge plank: handen onder je schouders, voeten iets uit elkaar.',f:'Tik om en om je schouder aan. Houd je heupen stil, alsof er een glas water op je rug staat.'},
+inchworm:{n:'Inchworm',fl:1,a:[0,0,0,0,0],b:[77,0,0,-77,-77],s:'Sta rechtop met voeten bij elkaar.',f:'Buig voorover, loop met je handen naar een hoge plank en weer terug. Benen zo recht mogelijk.'},
+bicycle:{n:'Bicycle Crunches',fl:1,a:[-60,-150,-40,100,100,null,null,150,60],b:[-60,-150,-40,150,60,null,null,100,100],s:'Lig op je rug, handen licht achter je oren, schouders los van de mat.',f:'Trek een knie in en draai je borst naar die knie. Rustig tempo, niet aan je nek trekken.'},
+bridge:{n:'Glute Bridge',fl:1,a:[-90,100,100,135,45],b:[-110,100,100,110,0],s:'Op je rug, voeten plat op de mat op heupbreedte, knieën gebogen.',f:'Duw door je hielen, til je heupen tot een rechte lijn schouder-knie. Bovenin billen knijpen.'},
+legraise:{n:'Leg Raises',fl:1,a:[-90,100,100,175,175],b:[-90,100,100,100,100],sp:3000,s:'Op je rug, handen onder je billen. Onderrug blijft op de mat.',f:'Zak je gestrekte benen langzaam tot net boven de mat en til ze weer op. Buig bij nood iets door je knieën.'},
+birddog:{n:'Bird-Dog',fl:1,uni:1,a:[90,0,0,0,-90],b:[90,0,0,0,-90,90,90,-95,-95],sp:3000,s:'Tafelpositie: handen onder schouders, knieën onder heupen.',f:'Strek tegenovergestelde arm en been tot één lijn. Heupen blijven recht, wissel halverwege van kant.'},
+kicks:{n:'Donkey Kicks',fl:1,uni:1,a:[90,0,0,0,-90],b:[90,0,0,0,-90,null,null,-100,170],s:'Tafelpositie op de mat.',f:'Duw je gebogen voet naar het plafond, billen aanspannen. Rug niet hol trekken. Wissel halverwege van been.'},
+lunge:{n:'Lunges',uni:1,db:2,a:[0,0,0,0,0],b:[0,0,0,80,-5,null,null,-20,-95],s:'Rechtop, armen langs je lijf (met dumbbells in je handen).',f:'Stap terug en zak tot je achterknie bijna de grond raakt. Voorknie boven je enkel. Wissel halverwege van been.'},
+rdl:{n:'Single-Leg RDL',uni:1,db:1,a:[0,0,0,0,0],b:[78,0,0,0,0,null,null,-100,-100],sp:3200,s:'Sta op één been met een zachte knie, dumbbells voor je dijen.',f:'Kantel vanuit je heup, achterste been strekt naar achter. Rug recht. Wissel halverwege van been.'},
+squat:{n:'Squats',db:0,a:[0,90,90,0,0],b:[28,90,90,70,-5],s:'Voeten op schouderbreedte, armen naar voren.',f:'Heupen naar achter en omlaag, borst omhoog, knieën volgen je tenen. Duw door je hielen omhoog.'},
+goblet:{n:'Goblet Squat',db:1,a:[0,20,150,0,0],b:[28,20,150,70,-5],s:'Houd een dumbbell verticaal tegen je borst, ellebogen naar beneden.',f:'Zak diep met een rechte rug, ellebogen tussen je knieën. Duw explosief omhoog.'},
+calf:{n:'Calf Raises',db:2,a:[0,0,0,0,0,null,null,null,null,0],b:[0,0,0,0,0,null,null,null,null,9],sp:2000,s:'Rechtop, voeten heupbreed. Houd evt. een dumbbell vast.',f:'Duw zo hoog mogelijk op je tenen, 1 sec vasthouden en langzaam zakken. Goed voor je hardloop-enkels.'},
+press:{n:'Overhead Press',db:1,a:[0,15,170,0,0],b:[0,175,180,0,0],s:'Dumbbells op schouderhoogte, buik aangespannen.',f:'Duw recht omhoog zonder je rug hol te trekken. Gecontroleerd terug naar de schouders.'},
+row:{n:'Bent-Over Row',db:1,a:[60,0,0,20,-10],b:[60,-130,0,20,-10],s:'Heupen naar achter, rug recht, licht gebogen knieën, armen hangend.',f:'Trek je ellebogen langs je lijf omhoog en knijp je schouderbladen samen.'},
+front:{n:'Front Raises',db:1,a:[0,0,0,0,0],b:[0,90,90,0,0],s:'Rechtop, dumbbells voor je dijen.',f:'Til je gestrekte armen tot schouderhoogte. Niet met je rug meezwaaien; 3 kg is genoeg, houd het langzaam.'},
+tri:{n:'Triceps Extensions',db:1,a:[0,180,-20,0,0],b:[0,180,180,0,0],s:'Armen omhoog, dumbbell(s) achter je hoofd, ellebogen dicht bij je oren.',f:'Strek je armen alleen vanuit de elleboog. Bovenarmen blijven stil.'}
+};
+const W=[
+{id:'core',day:1,t:'Maandag · Core & Mat',focus:'Buik & romp',eq:'Alleen mat',wt:0,d:'Sterke romp voor betere houding en hardloopstabiliteit.',ex:['plank','bicycle','bridge','legraise','birddog']},
+{id:'run',day:2,t:'Dinsdag · Hardloop Stabiliteit',focus:'Benen & balans',eq:'3 kg dumbbells',wt:1,d:'Benen, heupen en enkels sterker voor het hardlopen.',ex:['lunge','rdl','goblet','calf','bridge']},
+{id:'up',day:3,t:'Woensdag · Schouders & Rug',focus:'Bovenlichaam',eq:'3 kg dumbbells',wt:1,d:'Schouders, bovenrug en armen voor een rechte houding.',ex:['press','row','front','tri','taps']},
+{id:'glute',day:4,t:'Donderdag · Billen & Benen',focus:'Onderlichaam',eq:'Mat',wt:0,d:'Bilspieren en heupstabiliteit zonder gewicht.',ex:['squat','kicks','bridge','lunge','calf']},
+{id:'flow',day:5,t:'Vrijdag · Full Body Flow',focus:'Hele lichaam',eq:'Mat',wt:0,d:'Mobiliteit, lichte cardio en stabiliteit om de week af te sluiten.',ex:['squat','inchworm','lunge','birddog','taps']}
+];
+const $=id=>document.getElementById(id);
+const FIG='<line x1="0" x2="200" y1="150" y2="150" stroke="var(--line)" stroke-width="2"/><rect class="mat" x="8" y="150" width="184" height="6" rx="3" fill="#6366f1"/><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="8"><polyline class="fl" stroke="var(--far)"/><polyline class="fa" stroke="var(--far)"/><polyline class="to" stroke="var(--tx)" stroke-width="10"/><polyline class="nl" stroke="var(--ac)"/><polyline class="na" stroke="var(--ac)"/><line class="d1" stroke="#f59e0b" stroke-width="9"/><line class="d2" stroke="#f59e0b" stroke-width="9"/></g><circle class="hd" r="9" fill="var(--tx)"/>';
+const rad=a=>a*Math.PI/180,D=a=>[Math.sin(rad(a)),Math.cos(rad(a))];
+const res=p=>[p[0],p[1],p[2],p[3],p[4],p[5]??p[1],p[6]??p[2],p[7]??p[3],p[8]??p[4],p[9]||0];
+function fk(p){
+ const [tx,ty]=D(p[0]),sh=[52*tx,-52*ty],hd=[sh[0]+17*tx,sh[1]-17*ty];
+ const arm=(u,f)=>{const a=D(u),b=D(f),e=[sh[0]+28*a[0],sh[1]+28*a[1]];return[e,[e[0]+26*b[0],e[1]+26*b[1]]]};
+ const leg=(u,f)=>{const a=D(u),b=D(f),k=[38*a[0],38*a[1]];return[k,[k[0]+38*b[0],k[1]+38*b[1]]]};
+ return{hip:[0,0],sh,hd,a1:arm(p[1],p[2]),a2:arm(p[5],p[6]),l1:leg(p[3],p[4]),l2:leg(p[7],p[8])};
+}
+const allPts=f=>[f.hip,f.sh,[f.hd[0],f.hd[1]+4],...f.a1,...f.a2,...f.l1,...f.l2];
+function draw(root,ex,u,db){
+ const A=res(ex.a),B=res(ex.b);
+ if(ex.cx===undefined){const xs=[0,1].flatMap(k=>allPts(fk(k?B:A)).map(q=>q[0]));ex.cx=(Math.min(...xs)+Math.max(...xs))/2}
+ const p=A.map((v,i)=>v+(B[i]-v)*u),f=fk(p),dy=146-Math.max(...allPts(f).map(q=>q[1]))-p[9],dx=100-ex.cx;
+ const q=c=>root.querySelector('.'+c),pt=l=>l.map(v=>(v[0]+dx).toFixed(1)+','+(v[1]+dy).toFixed(1)).join(' ');
+ q('fl').setAttribute('points',pt([f.hip,...f.l2]));q('fa').setAttribute('points',pt([f.sh,...f.a2]));
+ q('to').setAttribute('points',pt([f.hip,f.sh]));q('nl').setAttribute('points',pt([f.hip,...f.l1]));q('na').setAttribute('points',pt([f.sh,...f.a1]));
+ const h=q('hd');h.setAttribute('cx',f.hd[0]+dx);h.setAttribute('cy',f.hd[1]+dy);
+ [['d1',f.a1[1]],['d2',f.a2[1]]].forEach(([c,w])=>{const l=q(c);l.style.display=db?'':'none';l.setAttribute('x1',w[0]+dx-7);l.setAttribute('x2',w[0]+dx+7);l.setAttribute('y1',w[1]+dy);l.setAttribute('y2',w[1]+dy)});
+ q('mat').style.display=ex.fl?'':'none';
+}
+const hasDb=(ex,w)=>ex.db===1||(ex.db===2&&w.wt);
+function still(svg,ex,u,w){svg.innerHTML=FIG;draw(svg,ex,u,hasDb(ex,w))}
+
+// ---- Animatie van de grote illustratie
+let cur=null,curW=null;
+$('fig').innerHTML=FIG;
+(function loop(t){if(cur){const u=(1-Math.cos(2*Math.PI*t/(cur.sp||2400)))/2;draw($('fig'),cur,u,hasDb(cur,curW))}requestAnimationFrame(loop)})(0);
+
+// ---- Geluid
+let ac=null,voice=true;
+function unlock(){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume()}catch(e){}}
+function beep(f=600,ms=120,at=0,vol=.3){try{unlock();const t=ac.currentTime+at,o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(1e-4,t+ms/1000);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+ms/1000)}catch(e){}}
+const chimeStart=()=>{beep(660,150);beep(880,150,.15);beep(1175,350,.3)};
+const chimeEnd=()=>{beep(1175,150);beep(880,150,.15);beep(660,400,.3)};
+function say(t){if(!voice||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='nl-NL';u.rate=1.02;const v=speechSynthesis.getVoices().find(x=>x.lang&&x.lang.startsWith('nl'));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
+function toggleVoice(){voice=!voice;if(!voice&&window.speechSynthesis)speechSynthesis.cancel();$('vt').textContent=voice?'Stem: aan':'Stem: uit';if(voice)say('Stem staat aan')}
+
+// ---- Navigatie en overzicht
+function show(id){['v-sel','v-pre','v-run','v-done'].forEach(v=>$(v).hidden=v!==id);if(id==='v-sel')home();scrollTo(0,0)}
+const LS=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}};
+let LOG=LS('hf-log'),CUS=LS('hf-custom'),DEL=LS('hf-del'),st_=0;
+function persist(ns){try{localStorage.setItem('hf-log',JSON.stringify(LOG));localStorage.setItem('hf-custom',JSON.stringify(CUS));localStorage.setItem('hf-del',JSON.stringify(DEL))}catch(e){}if(!ns){clearTimeout(st_);st_=setTimeout(syncNow,800)}}
+// ---- Dashboard: streak + kalender
+let cm=new Date(),sd=null;cm.setDate(1);
+const dk=t=>{const d=new Date(t);return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()};
+function streaks(){
+ const days=new Set(LOG.map(l=>dk(l.t))),has=d=>days.has(dk(d.getTime())),wk=d=>d.getDay()===0||d.getDay()===6;
+ let cur=0,best=0,run=0,d=new Date();d.setHours(12);if(!has(d))d.setDate(d.getDate()-1);
+ for(let g=0;g<400;g++){if(has(d))cur++;else if(!wk(d))break;d.setDate(d.getDate()-1)}
+ if(LOG.length){d=new Date(Math.min(...LOG.map(l=>l.t)));d.setHours(12);const e=new Date();e.setHours(12);for(;d<=e;d.setDate(d.getDate()+1)){if(has(d)){run++;best=Math.max(best,run)}else if(!wk(d))run=0}}
+ return{cur,best}}
+function dashHTML(){
+ const{cur,best}=streaks(),y=cm.getFullYear(),m=cm.getMonth(),off=(new Date(y,m,1).getDay()+6)%7,n=new Date(y,m+1,0).getDate(),td=dk(Date.now()),by={};
+ LOG.forEach(l=>(by[dk(l.t)]=by[dk(l.t)]||[]).push(l));
+ const inM=LOG.filter(l=>{const d=new Date(l.t);return d.getFullYear()===y&&d.getMonth()===m}).length;
+ let c='MDWDVZZ'.split('').map(x=>`<div class="mut">${x}</div>`).join('')+'<div style="cursor:default"></div>'.repeat(off);
+ for(let d=1;d<=n;d++){const k=y+'-'+m+'-'+d;c+=`<div class="${by[k]?'dn':''} ${k===td?'td':''}" onclick="selD('${k}')">${d}</div>`}
+ const sel=sd&&by[sd]?by[sd].map(l=>`${new Date(l.t).toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'})}: ${l.n||(W.find(w=>w.id===l.id)||{}).t||'Workout'} · ${l.m} min`).join('<br>'):'';
+ return `<div class="tiles"><div class="tile"><b>${cur}</b><span>🔥 streak (dagen)</span></div><div class="tile"><b>${best}</b><span>beste streak</span></div><div class="tile"><b>${inM}</b><span>deze maand</span></div></div><div class="card" style="margin-top:10px"><div style="display:flex;justify-content:space-between;align-items:center"><button class="lnk" onclick="mon(-1)">‹</button><b style="text-transform:capitalize">${cm.toLocaleDateString('nl-NL',{month:'long',year:'numeric'})}</b><button class="lnk" onclick="mon(1)">›</button></div><div class="cal">${c}</div><div class="mut" style="margin-top:8px;min-height:18px">${sel||'Tik op een groene dag voor details. Een vrij weekend breekt je streak niet.'}</div></div>`}
+function mon(d){cm.setMonth(cm.getMonth()+d);home()}
+function selD(k){sd=sd===k?null:k;home()}
+function home(){
+ const today=new Date().getDay();$('dash').innerHTML=dashHTML();
+ $('list').innerHTML=W.map(w=>`<div class="card wk" onclick="openPre('${w.id}')"><div><span class="tag">${w.focus}</span>${w.day===today?' <span class="tag" style="color:var(--ac2)">Vandaag</span>':''}<h3>${w.t}</h3><div class="mut">${w.eq} · ${w.ex.length} oefeningen</div></div><span style="font-size:20px;color:var(--mut)">›</span></div>`).join('');
+}
+let cw=null,rounds=3;
+const total=(n,r)=>PREP+r*n*WORK+r*(n-1)*REST+(r-1)*BREAK;
+function openPre(id){cw=W.find(w=>w.id===id);$('p-tag').textContent=cw.focus;$('p-title').textContent=cw.t;$('p-desc').textContent=cw.d+' Uitrusting: '+cw.eq+'.'+(cw.note?' '+cw.note:'');
+ $('p-ex').innerHTML=cw.ex.map((k,i)=>`<div class="card ex"><svg data-i="${i}" viewBox="0 0 200 160"></svg><div><h4>${i+1}. ${X[k].n}</h4><p class="mut">${X[k].q?`<b>${X[k].q}</b> · `:''}${X[k].s}</p></div></div>`).join('');
+ document.querySelectorAll('#p-ex svg').forEach(s=>{const e=X[cw.ex[s.dataset.i]];still(s,e,1,cw)});
+ if(cw.plan){const dur=cstep(cw).reduce((a,t)=>a+t.d,0);$('p-rl').hidden=true;$('seg').innerHTML='';$('p-sum').textContent=`≈ ${Math.round(dur/60)} min · ${cw.plan.length} stappen, in dezelfde volgorde als de video`}else{$('p-rl').hidden=false;setRounds(3)}$('p-del').hidden=!cw.cust;show('v-pre')}
+function setRounds(r){rounds=r;$('seg').innerHTML=[2,3,4].map(n=>`<button class="${n===r?'on':''}" onclick="setRounds(${n})">${n} rondes</button>`).join('');
+ $('p-sum').textContent=`≈ ${Math.round(total(cw.ex.length,r)/60)} min · ${r} × ${cw.ex.length} oefeningen · ${WORK}s werk, ${REST}s rust, ${BREAK}s pauze tussen rondes`}
+
+// ---- Circuit opbouw: elke stap = {k, d, e, r, i, next}
+function build(w,R){
+ const n=w.ex.length,s=[{k:'prep',d:PREP,e:X[w.ex[0]]}];
+ for(let r=0;r<R;r++)for(let i=0;i<n;i++){
+  s.push({k:'work',d:WORK,e:X[w.ex[i]],r,i});
+  const last=r===R-1&&i===n-1;if(last)break;
+  const brk=i===n-1;s.push({k:'rest',d:brk?BREAK:REST,e:X[w.ex[brk?0:i+1]],brk,r:brk?r+1:r});
+ }
+ return s;
+}
+function cstep(w){
+ const P=w.plan,n=P.filter(p=>p.k==='work').length,s=[],f=P.find(p=>p.k==='work');let c=0;
+ s.push({k:'prep',d:PREP,e:X[f.key]});
+ P.forEach((p,j)=>{
+  if(p.k==='work'){c++;s.push({k:'work',d:p.sec||Math.max(10,p.reps*3),reps:p.sec?0:p.reps,e:X[p.key],i:c-1,info:`Oefening ${c} van ${n}`})}
+  else{const nx=P.slice(j+1).find(q=>q.k==='work');if(nx)s.push({k:'rest',d:p.d,e:X[nx.key],info:'Rust'})}
+ });
+ return s}
+let S=null;
+function startWorkout(){
+ unlock();curW=cw;const steps=cw.plan?cstep(cw):build(cw,rounds);let c=0;const before=steps.map(s=>{const b=c;c+=s.d;return b});
+ S={steps,before,total:c,i:0,paused:false,end:0,rem:0,last:99,sw:false};
+ try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(l=>S.wl=l).catch(()=>{})}catch(e){}
+ show('v-run');$('pz').textContent='Pauze';enter(0);S.tid=setInterval(tick,200);
+}
+function enter(i){
+ S.i=i;const st=S.steps[i],n=cw.ex.length;S.end=Date.now()+st.d*1000;S.rem=st.d;S.last=99;S.sw=false;
+ cur=st.e;const col=st.k==='work'?'var(--ac)':'var(--ac2)';
+ $('r-ring').style.stroke=col;$('r-label').style.color=col;
+ $('r-label').textContent=st.k==='prep'?'Maak je klaar':st.k==='rest'?(st.brk?'Rondepauze':'Rust'):'Werk!';
+ $('r-info').textContent=st.info||st.k==='work'?`Ronde ${st.r+1}/${rounds} · Oefening ${st.i+1}/${n}`:st.k==='rest'?`Ronde ${st.r+1}/${rounds}`:`${rounds} rondes × ${n} oefeningen`;
+ $('r-name').textContent=(st.k==='work'?'':'Straks: ')+st.e.n;
+ $('r-tip').textContent=st.k==='work'?st.e.f:st.e.s;
+ const nw=S.steps.slice(i+1).find(x=>x.k==='work');
+ $('r-next').textContent=st.k==='work'?(nw?'Hierna: '+nw.e.n:'Laatste oefening!'):'';
+ $('r-side').textContent=st.reps?'Tik ⏭ als je klaar bent':(st.k==='work'&&st.e.uni)?'Eerste kant':'';
+ if(st.k==='work'){chimeStart();setTimeout(()=>say(`${st.i+1}. ${st.e.n}.${st.reps?' '+st.reps+' herhalingen.':''} Ga!`),450)}
+ else setTimeout(()=>say(st.k==='prep'?`Maak je klaar. We beginnen met ${st.e.n}.`:st.brk&&st.r!=null?`Rondepauze. Ronde ${st.r+1} begint met ${st.e.n}.`:`Rust. Straks: ${st.e.n}.`),500);
+ tick(true);
+}
+function tick(force){
+ if(!S||(S.paused&&force!==true))return;
+ const st=S.steps[S.i];if(st.reps){S.rem=st.d;$('r-time').textContent=st.reps+'×';$('r-ring').style.strokeDashoffset=0;upd(S.before[S.i]);return}if(!S.paused)S.rem=Math.max(0,(S.end-Date.now())/1000);
+ const sec=Math.ceil(S.rem);
+ if(sec!==S.last){S.last=sec;if(sec<=3&&sec>0)beep(600,100);if(st.k==='work'){if(sec===10&&st.d>20)say('Nog tien seconden');if(!st.e.uni&&sec===Math.round(st.d/2))say('Halverwege')}$('r-time').textContent=sec;}
+ if(st.k==='work'&&st.e.uni&&!S.sw&&S.rem<=st.d/2){S.sw=true;$('r-side').textContent='Wissel van kant!';beep(700,120);setTimeout(()=>beep(900,200),180);say('Wissel van kant')}
+ $('r-ring').style.strokeDashoffset=(364.4*(1-S.rem/st.d)).toFixed(1);
+ upd(S.before[S.i]+(st.d-S.rem));
+ if(S.rem<=0&&!S.paused){if(st.k==='work')chimeEnd();go(1)}
+}
+function upd(el){$('r-bar').style.width=(el/S.total*100)+'%';const l=Math.ceil(S.total-el);$('r-left').textContent=`nog ${Math.floor(l/60)}:${String(l%60).padStart(2,'0')}`}
+function go(d){const i=S.i+d;if(i>=S.steps.length)return finish();enter(Math.max(0,i))}
+function pause(){
+ if(!S.paused){tick();S.paused=true}else{S.end=Date.now()+S.rem*1000;S.paused=false}
+ $('pz').textContent=S.paused?'Hervat ▶':'Pauze';
+}
+function cleanup(){if(!S)return;clearInterval(S.tid);try{S.wl&&S.wl.release()}catch(e){}S=null;cur=null}
+let sc=0;
+function stopW(){const b=$('stp');if(!sc){b.textContent='Zeker?';sc=setTimeout(()=>{sc=0;b.textContent='Stop'},3000);return}clearTimeout(sc);sc=0;b.textContent='Stop';try{speechSynthesis.cancel()}catch(e){}cleanup();show('v-sel')}
+function finish(){
+ const min=Math.round(S.total/60);LOG.push({t:Date.now(),m:min,id:cw.id,n:cw.t});persist();
+ cleanup();setTimeout(()=>{beep(660,200);beep(880,200,.22);beep(1100,500,.44)},600);setTimeout(()=>say('Goed gedaan! Je workout zit erop.'),1300);
+ $('d-sum').textContent=`${cw.t} · ${min} minuten${cw.plan?'':' · '+rounds+' rondes'}. Streak: ${streaks().cur} dag${streaks().cur===1?'':'en'} op rij 🔥`;show('v-done');
+}
+let mp=false;
+function openM(){const e=cur;mp=S.paused;if(!mp)pause();
+ $('m-title').textContent=e.n;still($('m-a'),e,0,curW);still($('m-b'),e,1,curW);
+ $('m-body').innerHTML=`<p style="margin:0 0 6px"><b>Beginpositie:</b> ${e.s}</p><p style="margin:0"><b>Uitvoering:</b> ${e.f}</p>`;
+ $('modal').classList.add('on')}
+function closeM(){$('modal').classList.remove('on');if(!mp&&S&&S.paused)pause()}
+// ---- Eigen workouts (uit video), opgeslagen in je account
+function addCustom(c){
+ if(c.items){c.defs={};c.seq=[];c.items.forEach((e,k)=>{c.defs['e'+k]=e;if(k)c.seq.push({rest:20});c.seq.push({e:'e'+k,sec:40})});delete c.items}
+ const K={},plan=[];
+ for(const k in c.defs){const e=c.defs[k],b=X[e.lib in X?e.lib:'plank'];K[k]=c.id+'_'+k;X[K[k]]={...b,cx:undefined,n:String(e.n),s:String(e.s),f:String(e.f),db:e.db?1:0,uni:e.uni==null?b.uni:e.uni?1:0,q:''}}
+ c.seq.forEach(q=>{if(q.rest)plan.push({k:'rest',d:+q.rest});else if(K[q.e]){const x=X[K[q.e]],sec=+q.sec||0,reps=+q.reps||0;if(!x.q)x.q=sec?sec+' sec':reps+'×';plan.push({k:'work',key:K[q.e],sec,reps})}});
+ if(!plan.some(p=>p.k==='work'))return;
+ W.push({id:c.id,day:0,cust:1,t:c.t,focus:'Eigen video',eq:Object.values(c.defs).some(e=>e.db)?'3 kg dumbbells':'Mat',wt:1,d:c.d||'',note:c.note||'',ex:[...new Set(plan.filter(p=>p.k==='work').map(p=>p.key))],plan})}
+CUS.forEach(addCustom);
+function delCustom(){DEL.push(cw.id);CUS=CUS.filter(c=>c.id!==cw.id);W.splice(W.findIndex(w=>w.id===cw.id),1);persist();show('v-sel')}
+const MODEL='claude-sonnet-5-5';
+const CFG=()=>{try{return JSON.parse(localStorage.getItem('hf-cfg')||'{}')}catch(e){return{}}};
+(()=>{const c=CFG();$('s-key').value=c.key||'';$('s-url').value=c.url||'';$('s-anon').value=c.anon||'';$('s-code').value=c.code||''})();
+function saveCfg(){const c={key:$('s-key').value.trim(),url:$('s-url').value.trim().replace(/\/$/,''),anon:$('s-anon').value.trim(),code:$('s-code').value.trim()};
+ if(c.url&&c.code.length<16){$('s-msg').textContent='Gebruik een sync-code van minstens 16 tekens (knop "Maak sync-code").';return}
+ try{localStorage.setItem('hf-cfg',JSON.stringify(c))}catch(e){}$('s-msg').textContent='Opgeslagen.';syncNow()}
+async function askJSON(p){
+ const k=CFG().key;if(!k)throw new Error('Vul eerst je API-key in bij Instellingen, of laat de workout in een Claude-chat maken en plak de JSON.');
+ const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MODEL,max_tokens:8000,messages:[{role:'user',content:p}]})});
+ const j=await r.json();if(!r.ok)throw new Error((j.error&&j.error.message)||'API-fout '+r.status);
+ return JSON.parse(j.content.filter(x=>x.type==='text').map(x=>x.text).join('').replace(/```json|```/g,'').trim())}
+function adoptSpec(r){
+ if(r.error)throw new Error(r.error);
+ if(!r.defs||!Array.isArray(r.seq)||!r.seq.some(q=>q.e))throw new Error('Geen bruikbare oefeningen gevonden.');
+ const defs={};for(const k in r.defs){const e=r.defs[k];defs[k]={lib:String(e.lib||'plank'),n:String(e.n||k),s:String(e.s||''),f:String(e.f||''),db:e.db?1:0,uni:e.uni?1:0}}
+ const c={id:'c'+Date.now()+Math.floor(Math.random()*99),t:String(r.title||'Eigen workout'),d:String(r.desc||''),note:String(r.note||''),defs,seq:r.seq.slice(0,90).map(q=>q.rest?{rest:+q.rest||15}:{e:String(q.e),sec:+q.sec||0,reps:+q.reps||0})};
+ const n=W.length;addCustom(c);if(W.length===n)throw new Error('Geen bruikbare oefeningen gevonden.');CUS.push(c);persist();return c.id}
+function mergeIn(d){
+ (d.del||[]).forEach(i=>{if(!DEL.includes(i))DEL.push(i)});
+ CUS=CUS.filter(c=>!DEL.includes(c.id));for(let i=W.length-1;i>=0;i--)if(W[i].cust&&DEL.includes(W[i].id))W.splice(i,1);
+ (d.custom||[]).forEach(c=>{if(!DEL.includes(c.id)&&!CUS.some(x=>x.id===c.id)){CUS.push(c);addCustom(c)}});
+ (d.log||[]).forEach(l=>{if(!LOG.some(x=>x.t===l.t))LOG.push(l)});LOG.sort((a,b)=>a.t-b.t);persist(true);home()}
+function importText(t){const j=JSON.parse(t);
+ if(j.custom||j.log){mergeIn(j);return null}
+ const L=Array.isArray(j)?j:[j];let id=null;L.forEach(x=>{id=adoptSpec(x)});home();return id}
+function importJSON(){const m=$('yt-msg');try{const id=importText($('imp').value);$('imp').value='';m.textContent='Geïmporteerd.';if(id)openPre(id)}catch(e){m.textContent='Importeren mislukt: '+e.message}}
+function exportBk(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({custom:CUS,log:LOG,del:DEL})],{type:'application/json'}));a.download='homefit-backup.json';a.click()}
+function loadBk(el){const f=el.files[0];if(!f)return;f.text().then(t=>{try{importText(t);$('s-msg').textContent='Back-up geladen.'}catch(e){$('s-msg').textContent='Mislukt: '+e.message}})}
+async function rpc(fn,body){const c=CFG(),r=await fetch(c.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'content-type':'application/json',apikey:c.anon,Authorization:'Bearer '+c.anon},body:JSON.stringify(body)});if(!r.ok)throw new Error('sync '+r.status);return r.json()}
+async function syncNow(){const c=CFG();if(!(c.url&&c.anon&&c.code)){$('cloud').textContent='Opslag: dit apparaat';return}
+ try{const d=await rpc('hf_get',{p_code:c.code});if(d)mergeIn(d);await rpc('hf_set',{p_code:c.code,p_data:{custom:CUS,log:LOG,del:DEL}});$('cloud').textContent='Gesynchroniseerd via Supabase'}
+ catch(e){$('cloud').textContent='Sync mislukt (offline?) · opslag: dit apparaat'}}
+addEventListener('online',syncNow);
+async function makeFromVideo(){
+ const url=$('yt-url').value.trim(),txt=$('yt-txt').value.trim(),m=$('yt-msg');
+ if(txt.length<40){m.textContent='Plak ook de beschrijving of transcriptie: een link alleen kan ik niet uitlezen.';return}
+ m.textContent='Claude bouwt de workout na… (kan even duren)';$('yt-go').disabled=true;
+ const lib=Object.entries(X).filter(([k])=>!k.includes('_')).map(([k,e])=>k+' = '+e.n).join('; ');
+ try{
+  const r=await askJSON(`Je bouwt een app-workout die de YouTube-workout zo exact mogelijk nabouwt, in het Nederlands. Link: ${url}\nTekst van de video:\n"""${txt.slice(0,15000)}"""\n\nVolg de volgorde, tijden of herhalingen, het aantal rondes en de rustmomenten uit de video exact. Schrijf rondes volledig uit (herhaal de stappen in "seq"). Noemt de video geen tijd, kies een realistische waarde. De gebruiker heeft alleen een mat en twee dumbbells van 3 kg: behoud oefeningen zoveel mogelijk en vermeld afwijkingen kort in "note". Definieer elke unieke oefening één keer in "defs" en kies als "lib" de meest lijkende bibliotheekoefening voor de illustratie: ${lib}. Maximaal 90 stappen. Antwoord ALLEEN met JSON: {"title":"..","desc":"1 zin","note":"afwijkingen of leeg","defs":{"a":{"lib":"id","n":"naam","s":"beginpositie, 1 zin","f":"uitvoering, 1-2 zinnen","db":0,"uni":0}},"seq":[{"e":"a","sec":40},{"rest":15},{"e":"a","reps":12}]}. Bevat de tekst geen oefeningen: {"error":"korte uitleg"}.`,{modelTier:'default'});
+  if(r.error)throw new Error(r.error);
+  if(!r.defs||!Array.isArray(r.seq)||!r.seq.some(q=>q.e))throw new Error('Geen bruikbare oefeningen gevonden.');
+  const defs={};for(const k in r.defs){const e=r.defs[k];defs[k]={lib:String(e.lib||'plank'),n:String(e.n||k),s:String(e.s||''),f:String(e.f||''),db:e.db?1:0,uni:e.uni?1:0}}
+  const c={id:'c'+Date.now(),t:String(r.title||'Video workout'),d:String(r.desc||''),note:String(r.note||''),defs,seq:r.seq.slice(0,90).map(q=>q.rest?{rest:+q.rest||15}:{e:String(q.e),sec:+q.sec||0,reps:+q.reps||0})};
+  const n=W.length;addCustom(c);if(W.length===n)throw new Error('Geen bruikbare oefeningen gevonden.');
+  CUS.push(c);persist();
+  $('yt-txt').value='';$('yt-url').value='';m.textContent='';home();openPre(c.id);
+ }catch(e){m.textContent=e.code==='not_granted'?'Geen toestemming gegeven.':(e.message||'Mislukt, probeer het opnieuw.')}
+ $('yt-go').disabled=false;
+}
+home();syncNow();
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
