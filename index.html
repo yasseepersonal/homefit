@@ -64,7 +64,7 @@ summary{cursor:pointer;font-weight:700;font-size:13px}details .in{margin-bottom:
  <details class="card" style="margin-top:10px"><summary>Instellingen, back-up &amp; sync</summary>
   <div class="mut" style="margin:8px 0 2px">Anthropic API-key (blijft alleen op dit apparaat)</div><input class="in" id="s-key" type="password" autocomplete="off">
   <div class="mut" style="margin:8px 0 2px">Supabase (optioneel, voor sync tussen apparaten)</div>
-  <input class="in" id="s-url" placeholder="https://xxxx.supabase.co"><input class="in" id="s-anon" placeholder="anon public key"><input class="in" id="s-code" placeholder="sync-code (lang en geheim)">
+  <input class="in" id="s-url" placeholder="https://xxxx.supabase.co"><input class="in" id="s-anon" placeholder="publishable key (sb_publishable_...)"><input class="in" id="s-code" placeholder="sync-code (lang en geheim)">
   <div style="display:flex;gap:8px;margin-top:6px"><button style="flex:1" onclick="$('s-code').value=crypto.randomUUID()+crypto.randomUUID()">Maak sync-code</button><button class="pri" style="flex:1;font-size:14px;padding:10px" onclick="saveCfg()">Opslaan</button></div>
   <div id="s-msg" class="mut" style="margin-top:6px"></div>
   <div class="mut" style="margin:12px 0 4px">Back-up</div>
@@ -329,7 +329,7 @@ function importText(t){const j=JSON.parse(t);
 function importJSON(){const m=$('yt-msg');try{const id=importText($('imp').value);$('imp').value='';m.textContent='Geïmporteerd.';if(id)openPre(id)}catch(e){m.textContent='Importeren mislukt: '+e.message}}
 function exportBk(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({custom:CUS,log:LOG,del:DEL})],{type:'application/json'}));a.download='homefit-backup.json';a.click()}
 function loadBk(el){const f=el.files[0];if(!f)return;f.text().then(t=>{try{importText(t);$('s-msg').textContent='Back-up geladen.'}catch(e){$('s-msg').textContent='Mislukt: '+e.message}})}
-async function rpc(fn,body){const c=CFG(),r=await fetch(c.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'content-type':'application/json',apikey:c.anon,Authorization:'Bearer '+c.anon},body:JSON.stringify(body)});if(!r.ok)throw new Error('sync '+r.status);return r.json()}
+async function rpc(fn,body){const c=CFG(),r=await fetch(c.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'content-type':'application/json',apikey:c.anon,...(c.anon.startsWith('eyJ')?{Authorization:'Bearer '+c.anon}:{})},body:JSON.stringify(body)});if(!r.ok)throw new Error('sync '+r.status);return r.json()}
 async function syncNow(){const c=CFG();if(!(c.url&&c.anon&&c.code)){$('cloud').textContent='Opslag: dit apparaat';return}
  try{const d=await rpc('hf_get',{p_code:c.code});if(d)mergeIn(d);await rpc('hf_set',{p_code:c.code,p_data:{custom:CUS,log:LOG,del:DEL}});$('cloud').textContent='Gesynchroniseerd via Supabase'}
  catch(e){$('cloud').textContent='Sync mislukt (offline?) · opslag: dit apparaat'}}

@@ -27,7 +27,7 @@ create function hf_get(p_code text) returns jsonb language sql security definer 
 create function hf_set(p_code text, p_data jsonb) returns void language sql security definer set search_path=public as $$ insert into hf_state(code,data) values(p_code,p_data) on conflict(code) do update set data=excluded.data, updated_at=now() $$;
 grant execute on function hf_get(text), hf_set(text,jsonb) to anon;
 ```
-2. Kopieer *Project URL* en de *anon public key* (Settings → API) naar *Instellingen* in de app, druk op *Maak sync-code* en sla op.
+2. Kopieer *Project URL* en de *publishable key* (sb_publishable_..., Settings → API Keys; nooit de secret key) naar *Instellingen* in de app, druk op *Maak sync-code* en sla op.
 3. Zet op je andere apparaten dezelfde URL, key en sync-code. De sync-code is je "wachtwoord": deel hem niet.
 
 ## Back-up
